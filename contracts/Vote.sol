@@ -9,11 +9,15 @@ import "hardhat/console.sol";
 
 contract Vote is Ownable, Pausable, ReentrancyGuard {
     
+    // events
+    event PoliticalParyAded(string indexed partyName, string indexed presidentName);
+    event userVoted(address indexed user,  string indexed partyName);
+    event userCastedVote(address indexed from, address indexed to);
+
     // state
     uint public startDate;
     uint public endDate;
     
-    // events
 
     // structs
     struct PoliticalPary {
@@ -33,6 +37,8 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
         newParty.presidentName = _presidentName;
         newParty.regestrationDate = block.timestamp;
         politicalParties.push(newParty);
+
+        emit PoliticalParyAded(_partyName, _presidentName);
     }
 
     function getAllPoliticalParties() public view returns (PoliticalPary[] memory) {
@@ -65,6 +71,9 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
 
         politicalParties[_politicalParty].votes++;
         userVotes[msg.sender]++;
+
+        emit userVoted(msg.sender, politicalParties[_politicalParty].partyName);
+
     }
 
     function castVote(address _to) public whenNotPaused {
@@ -74,6 +83,9 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
 
         userVotes[msg.sender]++;
         userVotes[_to]--;
+
+        emit userCastedVote(msg.sender, _to);
+
     }
 
     function getUserVotes(address _user) public view returns (int) {
