@@ -8,16 +8,17 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
 contract Vote is Ownable, Pausable, ReentrancyGuard {
-    
     // events
-    event PoliticalParyAded(string indexed partyName, string indexed presidentName);
-    event userVoted(address indexed user,  string indexed partyName);
+    event PoliticalPartyAdded(
+        string indexed partyName,
+        string indexed presidentName
+    );
+    event userVoted(address indexed user, string indexed partyName);
     event userCastedVote(address indexed from, address indexed to);
 
     // state
-    uint public startDate;
-    uint public endDate;
-    
+    uint256 public startDate;
+    uint256 public endDate;
 
     // structs
     struct PoliticalPary {
@@ -29,19 +30,26 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
 
     PoliticalPary[] public politicalParties;
 
-    mapping(address => int) public userVotes;
+    mapping(address => int256) public userVotes;
 
-    function addPoliticalParty(string memory _partyName, string memory _presidentName) public onlyOwner {
+    function addPoliticalParty(
+        string memory _partyName,
+        string memory _presidentName
+    ) public onlyOwner {
         PoliticalPary memory newParty;
         newParty.partyName = _partyName;
         newParty.presidentName = _presidentName;
         newParty.regestrationDate = block.timestamp;
         politicalParties.push(newParty);
 
-        emit PoliticalParyAded(_partyName, _presidentName);
+        emit PoliticalPartyAdded(_partyName, _presidentName);
     }
 
-    function getAllPoliticalParties() public view returns (PoliticalPary[] memory) {
+    function getAllPoliticalParties()
+        public
+        view
+        returns (PoliticalPary[] memory)
+    {
         return politicalParties;
     }
 
@@ -57,8 +65,17 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
         return block.timestamp;
     }
 
-    function vote(uint _politicalParty) public whenNotPaused nonReentrant {
-        if (startDate == 0 || endDate == 0 || block.timestamp < startDate || block.timestamp > endDate) {
+    function resetUserVotes() public {
+        userVotes[msg.sender] = 0;
+    }
+
+    function vote(uint256 _politicalParty) public whenNotPaused nonReentrant {
+        if (
+            startDate == 0 ||
+            endDate == 0 ||
+            block.timestamp < startDate ||
+            block.timestamp > endDate
+        ) {
             console.log(block.timestamp);
             console.log(startDate);
             console.log(endDate);
@@ -73,7 +90,6 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
         userVotes[msg.sender]++;
 
         emit userVoted(msg.sender, politicalParties[_politicalParty].partyName);
-
     }
 
     function castVote(address _to) public whenNotPaused {
@@ -85,10 +101,9 @@ contract Vote is Ownable, Pausable, ReentrancyGuard {
         userVotes[_to]--;
 
         emit userCastedVote(msg.sender, _to);
-
     }
 
-    function getUserVotes(address _user) public view returns (int) {
+    function getUserVotes(address _user) public view returns (int256) {
         return userVotes[_user];
     }
 
