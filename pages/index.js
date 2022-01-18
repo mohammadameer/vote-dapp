@@ -57,7 +57,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {networkData?.chain?.id == 4 ? (
+      {networkData?.chain?.id == 4 || !accountData ? (
         <>
           <Header
             accountData={accountData}
