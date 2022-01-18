@@ -10,12 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
-const SwitchNetworkModal = ({
-  networkData,
-  networkLoading,
-  switchNetwork,
-  networkError,
-}) => {
+const SwitchNetworkModal = ({ networkData, networkLoading, networkError }) => {
   const router = useRouter();
 
   return (

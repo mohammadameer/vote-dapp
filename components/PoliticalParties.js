@@ -1,5 +1,4 @@
 import { Box, Button, Text, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useContractEvent } from "wagmi";
 import contractABI from "../contractABI.json";
@@ -7,7 +6,6 @@ import getReason from "../utils/getReason";
 
 const PoliticalParties = ({ contract, accountData }) => {
   const toast = useToast();
-  const router = useRouter();
 
   const [politicalParties, setPoliticalParties] = useState([]);
   const [loading, setLoading] = useState(false);
